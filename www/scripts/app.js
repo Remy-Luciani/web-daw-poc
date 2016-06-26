@@ -4,8 +4,9 @@ navigator.getUserMedia = ( navigator.getUserMedia ||
                        navigator.msGetUserMedia);
 
 var audioContext = new (window.AudioContext || webkitAudioContext)();
-var audio = document.querySelector('audio');
 var scConnectButton = document.querySelector('.sc-connect');
+var record = document.querySelector('#record-button');
+var stop = document.querySelector('#stop-button');
 
 if (!navigator.getUserMedia) {
   throw new Error('getUserMedia is not supported.')
@@ -14,18 +15,44 @@ if (!navigator.getUserMedia) {
 // Media recording
 
 var mediaConfig = {
-  audio: true,
-  video: false
+  audio: true
 };
 
 var mediaSuccess = function(stream) {
-  audio.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-  audio.onloadedmetadata = function(e) {
-    audio.play();
-    audio.muted = 'true';
-  };
   var source = audioContext.createMediaStreamSource(stream);
-  source.connect(audioContext.destination);
+  var recordedChunks = [];
+  var mediaRecorder = new MediaRecorder(stream);
+
+  record.addEventListener('click', function() {
+    mediaRecorder.start();
+    record.style.background = "red";
+    record.style.color = "white";
+  });
+
+  stop.addEventListener('click', function() {
+    mediaRecorder.stop();
+    record.style.background = "";
+    record.style.color = "";
+  });
+
+  mediaRecorder.addEventListener('dataavailable', function(event) {
+    recordedChunks.push(event.data);
+  });
+
+  mediaRecorder.addEventListener('stop', function(event) {
+      var blob = new Blob(recordedChunks, {
+        type: 'audio/ogg'
+      });
+      recordedChunks = [];
+      var url = window.URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      document.body.appendChild(a);
+      a.style = 'display: none';
+      a.href = url;
+      a.download = 'test.ogg';
+      a.click();
+      window.URL.revokeObjectURL(url);
+  });
 };
 
 var mediaError = function(err) {

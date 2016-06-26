@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Web DAW POC</title>
-  <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
+  <script type="text/javascript" src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
   <script>
     SC.initialize({
       client_id: '96c329323a2223fa824ee94c5451a262',
@@ -17,12 +17,13 @@
     <h1>Web DAW POC</h1>
   </header>
 
-  <a class="sc-connect" href="#"><img src="http://connect.soundcloud.com/2/btn-connect-sc-l.png"></a>
+  <div>
+    <a class="sc-connect" href="#"><img src="http://connect.soundcloud.com/2/btn-connect-sc-l.png"></a>
+  </div>
 
   <section>
-    <div>
-      <audio controls></audio>
-    </div>
+    <button id="record-button">Record</button>
+    <button id="stop-button">Stop</button>
   </section>
 
   <script src="scripts/app.js"></script>
